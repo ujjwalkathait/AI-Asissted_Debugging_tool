@@ -1,0 +1,7 @@
+For running the program.
+
+OPEN TERMINAL and THEN WRITE THESE COMMANDS ONE BY ONE.
+1. flex cpp_lexer.l
+2. g++ lex.yy.c -o cpp_lexer.exe
+3. ./cpp_lexer.exe      // for normal run
+4. Get-Content file_name | .\cpp_lexer.exe       //for inputting file 
