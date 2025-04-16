@@ -1,0 +1,7 @@
+commands to run the program
+
+OPEN TERMINAL and THEN WRITE THESE COMMANDS ONE BY ONE.
+1. flex python_lexer.l
+2. g++ lex.yy.c -o python_lexer.exe
+3. ./python_lexer.exe    // for normal run
+4. Get-Content file_name | .\python_lexer.exe       //for inputting file 
