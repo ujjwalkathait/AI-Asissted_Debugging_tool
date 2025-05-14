@@ -1,0 +1,48 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+#main
+{
+    position: relative;
+    height: 730px;
+    width: 100%;
+    background-color: aqua;
+}
+#heading{
+    position: relative;
+    height: 75px;
+    width: 100%;
+    background-color: gray;
+}
+#lowdiv{
+    position: relative;
+    width: 1512px;
+    height: 650px;
+    background-color: blueviolet;
+}
+#lowdiva{
+    position: relative;
+    height: 6500px;
+    width: 756px;
+    background-color:white;
+}
+#smalldiv{
+    position: relative;
+    height: 40px;
+    width: 378px;
+    background-color: rgb(160, 148, 148);
+}
+#longdiv{
+    position: relative;
+    height: 40px;
+    width: 756px;
+    background-color: rgb(160, 148, 148);
+}
+#syntaxdiv{
+    position: relative;
+    height: 180px;
+    width: 756px;
+    background-color:rgb(133, 123, 123);
+}
