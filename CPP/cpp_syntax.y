@@ -1,141 +1,231 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include "cpp_syntax.tab.h"
+#include <iostream>
+#include <cstdlib>
+#include "SymbolTable.cpp"
 
-void yyerror(const char *s);
-int yylex();
+extern int yylex();
+extern int yyparse();
 extern FILE *yyin;
-extern int yylineno;  // Get line number from the lexer
+extern int line_count;
+extern int error_count;
+extern FILE *errors;
 
-int syntax_errors = 0; // Count syntax errors
+void yyerror(const char *s) {
+    fprintf(errors, "Line %d: Syntax error: %s\n", line_count, s);
+    IncError();
+}
+
 %}
 
-// Operator precedence to resolve shift/reduce conflicts
-%right ASSIGNMENT_OP
-%left LOGICAL_OP
-%left RELATIONAL_OP
-%left ARITHMETIC_OP
-%left BITWISE_OP
-%left DOT_OP ARROW_OP
-%right ELSE // Ensures `else` binds to the closest `if`
+%union {
+    SymbolInfo* s;
+}
 
-// Tokens
-%token PREPROCESSOR KEYWORD IDENTIFIER NUMBER HEXADECIMAL BINARY OCTAL FLOAT 
-%token STRING_LITERAL CHAR_LITERAL RELATIONAL_OP ARITHMETIC_OP 
-%token ASSIGNMENT_OP LOGICAL_OP BITWISE_OP
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET SEMICOLON COMMA 
-%token COLON SCOPE_RESOLUTION TERNARY ELLIPSIS SYMBOL
-%token DOT_OP ARROW_OP
-%token IF ELSE WHILE FOR RETURN
+%token <s> ID CONST_INT CONST_FLOAT CONST_CHAR
+%token <s> ADDOP MULOP RELOP LOGICOP
+%token INCOP DECOP ASSIGNOP NOT
+%token LPAREN RPAREN LCURL RCURL LTHIRD RTHIRD COMMA SEMICOLON
+%token IF ELSE FOR WHILE DO BREAK INT CHAR FLOAT DOUBLE VOID 
+%token RETURN SWITCH CASE DEFAULT CONTINUE PRINTLN
+
+%right ASSIGNOP
+%left LOGICOP
+%left RELOP
+%left ADDOP
+%left MULOP
+%right NOT
+%right UNARY
+%left INCOP DECOP
+
+%start program
 
 %%
 
-// Main program
-program:
-    preprocessor program
-    | function program
-    | statement program
-    | error program { 
-        printf("Syntax Error on Line %d: Invalid syntax.\n", yylineno);
-        syntax_errors++;
-        yyclearin; yyerrok; // Recover and continue parsing
-    }
+program
+    : program declaration
+    | program function
     | /* empty */
     ;
 
-// Handling #include, #define, etc.
-preprocessor:
-    PREPROCESSOR IDENTIFIER STRING_LITERAL
+declaration
+    : type ID SEMICOLON
+    | type ID LTHIRD RTHIRD SEMICOLON
+    | type ID LTHIRD CONST_INT RTHIRD SEMICOLON
     ;
 
-// Function definition
-function:
-    KEYWORD IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE
-    ;
-
-// Statements inside function
-statements:
-    statements statement SEMICOLON
-    | statement SEMICOLON
-    | error SEMICOLON { 
-        printf("Syntax Error on Line %d: Invalid statement.\n", yylineno);
-        syntax_errors++;
-        yyclearin; yyerrok; // Continue parsing after an error
-    }
-    ;
-
-// Valid statements
-statement:
-    IDENTIFIER ASSIGNMENT_OP expression
-    | IDENTIFIER DOT_OP IDENTIFIER
-    | IDENTIFIER ARROW_OP IDENTIFIER
-    | if_statement
-    | loop_statement
-    | return_statement
-    ;
-
-// If-Else condition (Fixed Conflicts)
-if_statement:
-    IF LPAREN expression RPAREN LBRACE statements RBRACE
-    | IF LPAREN expression RPAREN LBRACE statements RBRACE ELSE LBRACE statements RBRACE %prec ELSE
-    ;
-
-// Loop (For/While)
-loop_statement:
-    WHILE LPAREN expression RPAREN LBRACE statements RBRACE
-    | FOR LPAREN expression SEMICOLON expression SEMICOLON expression RPAREN LBRACE statements RBRACE
-    ;
-
-// Return statement
-return_statement:
-    RETURN expression SEMICOLON
-    ;
-
-// Expressions
-expression:
-    IDENTIFIER
-    | NUMBER
-    | HEXADECIMAL
-    | BINARY
-    | OCTAL
+type
+    : INT
+    | CHAR
     | FLOAT
-    | STRING_LITERAL
-    | CHAR_LITERAL
-    | expression ARITHMETIC_OP expression
-    | expression RELATIONAL_OP expression
-    | expression LOGICAL_OP expression
-    | LPAREN expression RPAREN
+    | DOUBLE
+    | VOID
+    ;
+
+function
+    : type ID LPAREN parameters RPAREN compound_stmt
+    ;
+
+parameters
+    : parameter_list
+    | /* empty */
+    ;
+
+parameter_list
+    : parameter
+    | parameter_list COMMA parameter
+    ;
+
+parameter
+    : type ID
+    | type ID LTHIRD RTHIRD
+    ;
+
+compound_stmt
+    : LCURL stmt_list RCURL
+    ;
+
+stmt_list
+    : stmt_list stmt
+    | /* empty */
+    ;
+
+stmt
+    : expr_stmt
+    | compound_stmt
+    | selection_stmt
+    | iteration_stmt
+    | jump_stmt
+    | declaration
+    | print_stmt
+    ;
+
+expr_stmt
+    : expr SEMICOLON
+    | SEMICOLON
+    ;
+
+selection_stmt
+    : IF LPAREN expr RPAREN stmt
+    | IF LPAREN expr RPAREN stmt ELSE stmt
+    | SWITCH LPAREN expr RPAREN LCURL case_list RCURL
+    ;
+
+case_list
+    : case_stmt case_list
+    | /* empty */
+    ;
+
+case_stmt
+    : CASE CONST_INT ':' stmt_list
+    | DEFAULT ':' stmt_list
+    ;
+
+iteration_stmt
+    : WHILE LPAREN expr RPAREN stmt
+    | DO stmt WHILE LPAREN expr RPAREN SEMICOLON
+    | FOR LPAREN expr_stmt expr_stmt expr RPAREN stmt
+    ;
+
+jump_stmt
+    : BREAK SEMICOLON
+    | CONTINUE SEMICOLON
+    | RETURN SEMICOLON
+    | RETURN expr SEMICOLON
+    ;
+
+print_stmt
+    : PRINTLN LPAREN expr RPAREN SEMICOLON
+    ;
+
+expr
+    : assignment_expr
+    ;
+
+assignment_expr
+    : logical_expr
+    | unary_expr ASSIGNOP assignment_expr
+    ;
+
+logical_expr
+    : equality_expr
+    | logical_expr LOGICOP equality_expr
+    ;
+
+equality_expr
+    : relational_expr
+    | equality_expr RELOP relational_expr
+    ;
+
+relational_expr
+    : additive_expr
+    | relational_expr RELOP additive_expr
+    ;
+
+additive_expr
+    : multiplicative_expr
+    | additive_expr ADDOP multiplicative_expr
+    ;
+
+multiplicative_expr
+    : unary_expr
+    | multiplicative_expr MULOP unary_expr
+    ;
+
+unary_expr
+    : postfix_expr
+    | ADDOP unary_expr %prec UNARY
+    | INCOP unary_expr
+    | DECOP unary_expr
+    | NOT unary_expr
+    ;
+
+postfix_expr
+    : primary_expr
+    | postfix_expr INCOP
+    | postfix_expr DECOP
+    | postfix_expr LPAREN args RPAREN
+    | postfix_expr LTHIRD expr RTHIRD
+    ;
+
+primary_expr
+    : ID
+    | CONST_INT
+    | CONST_FLOAT
+    | CONST_CHAR
+    | LPAREN expr RPAREN
+    ;
+
+args
+    : expr_list
+    | /* empty */
+    ;
+
+expr_list
+    : expr
+    | expr_list COMMA expr
     ;
 
 %%
 
-// Error handling function
-void yyerror(const char *s) {
-    fprintf(stderr, "Syntax Error on Line %d: %s\n", yylineno, s);
-    syntax_errors++;
-}
-
-// Main function
 int main(int argc, char *argv[]) {
     if (argc > 1) {
-        FILE *file = fopen(argv[1], "r");
-        if (!file) {
-            perror("Error opening file");
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            std::cerr << "Error opening file: " << argv[1] << std::endl;
             return 1;
         }
-        yyin = file;
     }
-
-    printf("Starting Syntax Analysis...\n");
+    
+    errors = fopen("syntax_errors.txt", "w");
+    if (!errors) {
+        std::cerr << "Error creating error log file" << std::endl;
+        return 1;
+    }
+    
     yyparse();
-
-    if (syntax_errors == 0)
-        printf("Parsing successful! No syntax errors detected.\n");
-    else
-        printf("Parsing completed with %d syntax errors.\n", syntax_errors);
-
-    if (yyin != NULL) fclose(yyin); // Close file if opened
-
+    
+    fclose(errors);
+    if (yyin != stdin) fclose(yyin);
+    
     return 0;
 }

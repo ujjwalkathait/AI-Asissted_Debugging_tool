@@ -1,5 +1,5 @@
-document.getElementById("b1").addEventListener("click", async () => {
-    const code = document.getElementById("codeInput").value;
+document.getElementById("debug-btn").addEventListener("click", async () => {
+    const code = document.getElementById("code-input").value;
 
     const response = await fetch("/debug", {
         method: "POST",

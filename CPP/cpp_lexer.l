@@ -1,60 +1,205 @@
+%option noyywrap
+
 %{
+// DEFINATIONS
+#include<bits/stdc++.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include "SymbolTable.cpp"
 #include "cpp_syntax.tab.h"
-#include <stdio.h>
+#define YYSTYPE yylval
 
-extern int yylval;
-extern FILE *yyin;
-void yyerror(const char *s);
+using namespace std;
 
-int yylineno = 1;
+extern int error_count ;
+extern int line_count ;
+extern  FILE *errors;
+//extern FILE *fp;
+
+
+
+void IncLine()
+{
+	line_count++;
+}
+
+void IncError()
+{
+	error_count++;
+}
+
+
+
+
+
+
 %}
 
-%option noyywrap
+
+Letter [a-zA-Z]
+Digit [0-9]
+Newline [\n]
+Char [ -~]{-}['\\]
+WhiteSpace [ \t\f\r\v]
 
 %%
 
-\n  { yylineno++; }
 
-"alignas"|"alignof"|"and"|"and_eq"|"asm"|"auto"|"bitand"|"bitor"|"bool"|"break"|"case"|"catch"|"char"|"class"|"compl"|"const"|"constexpr"|"const_cast"|"continue"|"decltype"|"default"|"delete"|"do"|"double"|"dynamic_cast"|"else"|"enum"|"explicit"|"export"|"extern"|"false"|"float"|"for"|"friend"|"goto"|"if"|"inline"|"int"|"long"|"mutable"|"namespace"|"new"|"noexcept"|"not"|"not_eq"|"nullptr"|"operator"|"or"|"or_eq"|"private"|"protected"|"public"|"register"|"reinterpret_cast"|"return"|"short"|"signed"|"sizeof"|"static"|"static_assert"|"static_cast"|"struct"|"switch"|"template"|"this"|"thread_local"|"throw"|"true"|"try"|"typedef"|"typeid"|"typename"|"union"|"unsigned"|"using"|"virtual"|"void"|"volatile"|"wchar_t"|"while"|"xor"|"xor_eq" { return KEYWORD; }
 
-"#include"|"#define" { return PREPROCESSOR; }
-
-[a-zA-Z_][a-zA-Z0-9_]*      { return IDENTIFIER; }
-[0-9]+                      { return NUMBER; }
-0[xX][0-9a-fA-F]+           { return HEXADECIMAL; }
-0b[01]+                     { return BINARY; }
-\b0[0-7]+[uUlL]*\b          { return OCTAL; }
-[0-9]+(\.[0-9]+([eE][-+]?[0-9]+)?)?|\.[0-9]+([eE][-+]?[0-9]+)? { return FLOAT; }
-
-\"([^\\\n]|(\\.))*?\"       { return STRING_LITERAL; }
-\'([^\\]|(\\.))\'           { return CHAR_LITERAL; }
-
-"=="|"!="|"<="|">="|"<"|">" { return RELATIONAL_OP; }
-"="|"+"|"-"|"*"|"/"|"%"|"++"|"--" { return ARITHMETIC_OP; }
-"+="|"-="|"*="|"/="|"%="    { return ASSIGNMENT_OP; }
-"&&"|"||"|"!"               { return LOGICAL_OP; }
-"&"|"|"|"^"|"~"             { return BITWISE_OP; }
-"->"                        { return ARROW_OP; }
-"."                         { return DOT_OP; }
-
-"("   { return LPAREN; }
-")"   { return RPAREN; }
-"{"   { return LBRACE; }
-"}"   { return RBRACE; }
-"["   { return LBRACKET; }
-"]"   { return RBRACKET; }
-";"   { return SEMICOLON; }
-","   { return COMMA; }
-":"   { return COLON; }
-"::"  { return SCOPE_RESOLUTION; }
-"?"   { return TERNARY; }
-"..." { return ELLIPSIS; }
-
-[ \t]+  { }
-
-.  { 
-    printf("Lexical error at line %d: Unexpected character '%c'\n", yylineno, yytext[0]);
-    return SYMBOL; 
+{WhiteSpace}+ {
+	// ignore white space
 }
+
+{Newline} {
+	IncLine();
+}
+
+ 
+
+
+
+"if"		{
+			 return IF;
+		}
+"else"		{
+			return ELSE;
+		}
+"for"		{
+			return FOR;
+		}
+"while"		{
+			return WHILE;
+		}
+"do"		{
+			return DO;
+		}
+"break"		{
+			return BREAK;
+		}
+"int"		{
+			return INT;
+		}
+"char"		{
+			return CHAR;
+		}
+"float"		{ 
+			return FLOAT;
+		}
+"double"		{
+			return DOUBLE;
+		}
+"void"		{ 
+			return VOID;
+		}
+"return"		{
+			return RETURN;
+		}
+"switch"		{
+			return SWITCH;
+		}
+"case"		{
+			return CASE;
+		}
+"default"		{
+			return DEFAULT;
+		}
+"continue"	{
+			return CONTINUE;
+		}
+
+"println"	{
+			return PRINTLN;
+		}
+
+
+
+"+" |
+"-"	{
+			SymbolInfo *ss = new  SymbolInfo(yytext, "ADDOP");
+			yylval.s = ss;
+			return ADDOP;
+		}
+
+[*/%]		{
+			SymbolInfo *ss = new  SymbolInfo(yytext, "MULOP");
+			yylval.s = ss;
+			return MULOP;
+		}
+
+("++")		{
+			return INCOP;
+		}
+"--"	 	{
+			return DECOP;
+		}
+
+("<=")|[<>]|(">=")|("==")|("!=")		{
+			SymbolInfo *ss = new  SymbolInfo(yytext, "RELOP");
+			yylval.s = ss;
+			return RELOP;
+		}
+
+[=]		{
+			return ASSIGNOP;
+		}
+("&&")|("||")		{
+			SymbolInfo *ss = new  SymbolInfo(yytext, "LOGICOP");
+			yylval.s = ss;
+			return LOGICOP;
+		}
+
+
+"!"		{return NOT; }
+"(" 	{return LPAREN;}
+")" 	{return RPAREN;}
+"{" 	{return LCURL;}
+"}" 	{return RCURL;}
+"[" 	{return LTHIRD;}
+"]" 	{return RTHIRD;}
+
+","		{
+			return COMMA;
+		}
+";"		{
+			return SEMICOLON;
+		}
+
+
+
+
+
+
+{Digit}+ 	{
+				SymbolInfo *ss = new  SymbolInfo(yytext, "CONST_INT");
+				yylval.s = ss;
+				return CONST_INT;
+	}
+
+{Digit}*"."({Digit}+([E][-]?{Digit}+)?) {
+				SymbolInfo *ss = new  SymbolInfo(yytext, "CONST_FLOAT");
+				yylval.s = ss;
+				return CONST_FLOAT;		
+}
+
+"'"{Char}"'" {
+				SymbolInfo *ss = new  SymbolInfo(yytext, "CONST_CHAR");
+				yylval.s = ss;
+				return CONST_CHAR;
+	
+}
+
+
+
+
+
+
+({Letter}|_)({Letter}|{Digit}|_)*	{
+				SymbolInfo *ss = new  SymbolInfo(yytext, "ID");
+				yylval.s = ss;
+				return ID;
+}
+
+
+
 
 %%

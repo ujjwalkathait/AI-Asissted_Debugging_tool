@@ -54,48 +54,80 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    PREPROCESSOR = 258,            /* PREPROCESSOR  */
-    KEYWORD = 259,                 /* KEYWORD  */
-    IDENTIFIER = 260,              /* IDENTIFIER  */
-    NUMBER = 261,                  /* NUMBER  */
-    HEXADECIMAL = 262,             /* HEXADECIMAL  */
-    BINARY = 263,                  /* BINARY  */
-    OCTAL = 264,                   /* OCTAL  */
-    FLOAT = 265,                   /* FLOAT  */
-    STRING_LITERAL = 266,          /* STRING_LITERAL  */
-    CHAR_LITERAL = 267,            /* CHAR_LITERAL  */
-    RELATIONAL_OP = 268,           /* RELATIONAL_OP  */
-    ARITHMETIC_OP = 269,           /* ARITHMETIC_OP  */
-    ASSIGNMENT_OP = 270,           /* ASSIGNMENT_OP  */
-    LOGICAL_OP = 271,              /* LOGICAL_OP  */
-    BITWISE_OP = 272,              /* BITWISE_OP  */
-    LPAREN = 273,                  /* LPAREN  */
-    RPAREN = 274,                  /* RPAREN  */
-    LBRACE = 275,                  /* LBRACE  */
-    RBRACE = 276,                  /* RBRACE  */
-    LBRACKET = 277,                /* LBRACKET  */
-    RBRACKET = 278,                /* RBRACKET  */
-    SEMICOLON = 279,               /* SEMICOLON  */
-    COMMA = 280,                   /* COMMA  */
-    COLON = 281,                   /* COLON  */
-    SCOPE_RESOLUTION = 282,        /* SCOPE_RESOLUTION  */
-    TERNARY = 283,                 /* TERNARY  */
-    ELLIPSIS = 284,                /* ELLIPSIS  */
-    SYMBOL = 285,                  /* SYMBOL  */
-    DOT_OP = 286,                  /* DOT_OP  */
-    ARROW_OP = 287,                /* ARROW_OP  */
-    IF = 288,                      /* IF  */
-    ELSE = 289,                    /* ELSE  */
-    WHILE = 290,                   /* WHILE  */
-    FOR = 291,                     /* FOR  */
-    RETURN = 292                   /* RETURN  */
+    ADD_ASSIGN = 258,              /* ADD_ASSIGN  */
+    SUB_ASSIGN = 259,              /* SUB_ASSIGN  */
+    MUL_ASSIGN = 260,              /* MUL_ASSIGN  */
+    DIV_ASSIGN = 261,              /* DIV_ASSIGN  */
+    AND_ASSIGN = 262,              /* AND_ASSIGN  */
+    MOD_ASSIGN = 263,              /* MOD_ASSIGN  */
+    XOR_ASSIGN = 264,              /* XOR_ASSIGN  */
+    OR_ASSIGN = 265,               /* OR_ASSIGN  */
+    RIGHT_OP = 266,                /* RIGHT_OP  */
+    LEFT_OP = 267,                 /* LEFT_OP  */
+    AND_OP = 268,                  /* AND_OP  */
+    OR_OP = 269,                   /* OR_OP  */
+    EQ_OP = 270,                   /* EQ_OP  */
+    NE_OP = 271,                   /* NE_OP  */
+    RIGHT_ASSIGN = 272,            /* RIGHT_ASSIGN  */
+    LEFT_ASSIGN = 273,             /* LEFT_ASSIGN  */
+    LOG_NOT_OP = 274,              /* LOG_NOT_OP  */
+    BIT_NOT_OP = 275,              /* BIT_NOT_OP  */
+    READ = 276,                    /* READ  */
+    WRITE = 277,                   /* WRITE  */
+    INT = 278,                     /* INT  */
+    ID = 279,                      /* ID  */
+    SEMI = 280,                    /* SEMI  */
+    COMMA = 281,                   /* COMMA  */
+    TYPE = 282,                    /* TYPE  */
+    LP = 283,                      /* LP  */
+    RP = 284,                      /* RP  */
+    LB = 285,                      /* LB  */
+    RB = 286,                      /* RB  */
+    LC = 287,                      /* LC  */
+    RC = 288,                      /* RC  */
+    STRUCT = 289,                  /* STRUCT  */
+    RETURN = 290,                  /* RETURN  */
+    IF = 291,                      /* IF  */
+    ELSE = 292,                    /* ELSE  */
+    BREAK = 293,                   /* BREAK  */
+    CONT = 294,                    /* CONT  */
+    FOR = 295,                     /* FOR  */
+    DOT = 296,                     /* DOT  */
+    ASSIGN = 297,                  /* ASSIGN  */
+    IF_NO_ELSE = 298,              /* IF_NO_ELSE  */
+    ELSE_AFTER_IF = 299,           /* ELSE_AFTER_IF  */
+    BIT_OR_OP = 300,               /* BIT_OR_OP  */
+    BIT_XOR_OP = 301,              /* BIT_XOR_OP  */
+    BIT_AND_OP = 302,              /* BIT_AND_OP  */
+    GE_OP = 303,                   /* GE_OP  */
+    LE_OP = 304,                   /* LE_OP  */
+    GT_OP = 305,                   /* GT_OP  */
+    LT_OP = 306,                   /* LT_OP  */
+    PLUS_OP = 307,                 /* PLUS_OP  */
+    MINUS_OP = 308,                /* MINUS_OP  */
+    PRODUCT_OP = 309,              /* PRODUCT_OP  */
+    DIV_OP = 310,                  /* DIV_OP  */
+    MOD_OP = 311,                  /* MOD_OP  */
+    INC_OP = 312,                  /* INC_OP  */
+    DEC_OP = 313,                  /* DEC_OP  */
+    UNARY = 314                    /* UNARY  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 14 "cpp_syntax.y"
+
+    char* string;
+    TreeNode* node;
+
+#line 128 "cpp_syntax.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
