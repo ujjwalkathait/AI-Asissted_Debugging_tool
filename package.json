@@ -10,9 +10,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.10.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "multer": "^2.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ujjwalkathait/AI-Asissted_Debugging_tool.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ujjwalkathait/AI-Asissted_Debugging_tool/issues"
+  },
+  "homepage": "https://github.com/ujjwalkathait/AI-Asissted_Debugging_tool#readme"
 }
