@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Assisted Debugging Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> AI-Assisted Debugging Tool</h1>
+            <p>Advanced debugging powered by artificial intelligence - find and fix errors in your code instantly</p>
+        </header>
+
+        <div class="main-content">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-code floating"></i>
+                        <span>Code Editor</span>
+                    </div>
+                    <div class="language-icon">
+                        <i class="fab fa-js"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="editor-container">
+                        <div class="language-selector">
+                            <label for="language-select"><i class="fas fa-cog"></i> Programming Language:</label>
+                            <select id="language-select">
+                                <option>C</option>
+                                <option>C++</option>
+                                <option>Python</option>
+                                <option>Java</option>
+                            </select>
+                        </div>
+                        <textarea class="code-editor" id="code-input" placeholder="Enter your code here..."></textarea>
+                        <button class="debug-btn" id="debug-button">
+                            <i class="fas fa-bug"></i> Debug Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-robot floating"></i>
+                        <span>AI Debugging Assistant</span>
+                    </div>
+                    <div class="language-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="output-container">
+                        <div class="ai-output" id="debug-output">
+</div>
+                        
+</div>
+<div class="error-container">
+<div class="error-header">
+<i class="fas fa-exclamation-circle"></i>
+<h3>Errors & Suggestions</h3>
+</div>
+<div class="error-box" id="error-output"></div>
+</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span>AI Debugger: Online</span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span>Connection: Secure</span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span>Processing: Ready</span>
+            </div>
+        </div>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Instant Debugging</h3>
+                <p>Find errors in your code in seconds with our powerful AI algorithms</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Smart Suggestions</h3>
+                <p>Get intelligent recommendations to improve your code quality</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h3>Multi-Language</h3>
+                <p>Supports all major programming languages and frameworks</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
